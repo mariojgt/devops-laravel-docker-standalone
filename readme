@@ -1,6 +1,18 @@
-run this to create the network for traefik
+## The project is a simple docker-compose file to run a laravel project with traefik as a reverse proxy
 
+### 1. Create the trafiik network
+
+```bash
 docker network create traefik-net
+```
 
-// now give executable permission to the script
+### 2. Give the start.sh script executable permission
+```bash
 sudo chmod +x project/start.sh
+```
+
+### 3. Add you laravel project to the project/application folder
+
+### 4. *make build* and up the docker-compose file
+
+### 5. *make start* the docker-compose file
