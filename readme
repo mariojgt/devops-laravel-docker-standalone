@@ -4,6 +4,3 @@ docker network create traefik-net
 
 // now give executable permission to the script
 sudo chmod +x project/start.sh
-
-// laravle permission issue
-sudo chmod -R 775 project/application/storage/

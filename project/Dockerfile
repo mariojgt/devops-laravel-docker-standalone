@@ -58,6 +58,7 @@ RUN docker-php-ext-enable \
 # 5. composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
+# 6. start script
 RUN mkdir -p /scripts
 COPY ./start.sh /scripts
 WORKDIR /scripts
