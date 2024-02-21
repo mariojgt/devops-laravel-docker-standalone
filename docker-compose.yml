@@ -1,0 +1,85 @@
+version: '3'
+
+networks:
+  traefik-net:
+    external: true
+
+services:
+  # Traefik Service
+  traefik:
+    image: traefik:latest
+    container_name: traefik
+    command:
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--entrypoints.web.address=:80"
+    ports:
+      - "80:80"
+      - "8080:8080"
+    networks:
+      - traefik-net
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+
+  # Laravel Application
+  app:
+    build:
+      context: ./project
+      dockerfile: Dockerfile  # Specify the name of your Dockerfile if it's not named 'Dockerfile'
+    container_name: laravel-app
+    working_dir: /var/www/html
+    volumes:
+      - ./project/application:/var/www/html
+    networks:
+      - traefik-net
+    labels:
+      - "traefik.http.routers.laravel-app.rule=Host(`laravel-app.localhost`)"
+
+  # MySQL Database
+  mysql:
+    image: mysql:8.0
+    container_name: laravel-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_DATABASE: laravel_db
+      MYSQL_USER: laravel_user
+      MYSQL_PASSWORD: laravel_password
+    networks:
+      - traefik-net
+    labels:
+      - "traefik.enable=false"
+
+  # Redis Server
+  redis:
+    image: redis:alpine
+    container_name: laravel-redis
+    networks:
+      - traefik-net
+    labels:
+      - "traefik.enable=false"
+
+  # PHPMyAdmin
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: laravel-phpmyadmin
+    environment:
+      PMA_HOST: mysql
+      PMA_USER: laravel_user
+      PMA_PASSWORD: laravel_password
+    ports:
+      - "1234:80"
+    networks:
+      - traefik-net
+    labels:
+      - "traefik.http.routers.phpmyadmin.rule=Host(`phpmyadmin.localhost`)"
+
+  # Portainer
+  portainer:
+    image: portainer/portainer-ce
+    container_name: portainer
+    ports:
+      - "9000:9000"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - traefik-net
