@@ -1,12 +1,19 @@
 .PHONY: start stop build
 
 COMPOSE=sudo docker-compose
+DOCKER=sudo docker
+
+# /env
+CODE_PATH:= $(shell grep -E '^CODE_PATH' .env | cut -d '=' -f 2)
 
 network:
-	sudo docker network create traefik-net
+	$(DOCKER) network create traefik-net
 
 start:
 	$(COMPOSE) up -d
+
+start-utility:
+	$(COMPOSE) -f docker-compose.ssl.yml up -d
 
 stop:
 	$(COMPOSE) -f docker-compose.yml down
