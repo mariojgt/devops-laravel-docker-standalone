@@ -1,0 +1,25 @@
+version: '3'
+
+networks:
+  traefik-net:
+    external: true
+
+services:
+  nodeapp01:
+    image: squishyu/bun-alpine
+    container_name: ${CONTAINER_PREFIX}-nodeapp01
+    working_dir: /app
+    volumes:
+      - ${NODE_01_CODE_PATH}:/app
+    ports:
+      - ${NODE_01_PORT}:${NODE_01_PORT_EXPOSE:-3000}  # Provide a default value of 3000 if NODE_PORT_EXPOSE is not set
+    # Command to run during the build process
+    command: sh -c "${NODE_01_START}"
+    # Other options you might need
+    environment:
+      - NODE_ENV=dev
+    labels:
+      - "traefik.http.routers.nodeapp01.rule=Host(`${NODE_01_DOMAIN}-${CONTAINER_PREFIX}.${HOST_PREFIX}`)"
+      - "traefik.http.services.nodeapp01.loadbalancer.server.port=${NODE_01_PORT}"
+      - "traefik.http.services.nodeapp01.loadbalancer.server.scheme=http"
+

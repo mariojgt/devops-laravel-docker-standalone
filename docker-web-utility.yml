@@ -8,7 +8,7 @@ services:
   # Traefik Service
   traefik:
     image: traefik:latest
-    container_name: traefik
+    container_name: ${CONTAINER_PREFIX}-traefik
     command:
       - "--api.insecure=true"
       - "--providers.docker=true"
@@ -20,14 +20,40 @@ services:
       - traefik-net
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
+    labels:
+      - "traefik.http.routers.traefik.rule=Host(`traefik-${CONTAINER_PREFIX}.${HOST_PREFIX}`)"
+    restart: unless-stopped
 
   # Portainer
   portainer:
     image: portainer/portainer-ce
-    container_name: portainer
+    container_name: ${CONTAINER_PREFIX}-portainer
     ports:
       - "9000:9000"
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer_data:/data
     networks:
       - traefik-net
+    labels:
+      - "traefik.http.routers.portainer.rule=Host(`portainer-${CONTAINER_PREFIX}.${HOST_PREFIX}`)"
+      - "traefik.http.services.portainer.loadbalancer.server.port=9000"
+    environment:
+      - "ADMIN_USERNAME=${ADMIN_LOGIN}"
+      - "ADMIN_PASSWORD=${ADMIN_PASSWORD}"
+    restart: unless-stopped
+
+    # Redis redisinsight
+  redisinsight:
+    image: redis/redisinsight:latest
+    container_name: ${CONTAINER_PREFIX}-redis_insight
+    ports:
+      - ${REDIS_INSIGHT_PORT}:5540
+    networks:
+      - traefik-net
+    labels:
+      - "traefik.http.routers.redis_insight.rule=Host(`redis-insight-${CONTAINER_PREFIX}.${HOST_PREFIX}`)"
+      - "traefik.http.services.redis_insight.loadbalancer.server.port=5540"
+    restart: unless-stopped
+
+volumes:
+  portainer_data:
