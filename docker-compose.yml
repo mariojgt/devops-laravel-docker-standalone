@@ -6,20 +6,20 @@ networks:
 
 services:
   # Laravel Application
-  php-app:
+  php-app: # If you update the service name you have to change in the nginx default.conf file
     build:
       context: ./project
-      dockerfile: DockerfileNginx  # Specify the name of your Dockerfile if it's not named 'Dockerfile'
+      dockerfile: DockerfileNginx
     container_name: ${CONTAINER_PREFIX}-app
     working_dir: /var/www/html
     volumes:
       - ${CODE_PATH}:/var/www/html
     networks:
       - traefik-net
-  # php-app-apache:
+  # php-app-apache: # Uncoment this if you want to use apache and comment the above service and the nginx service
   #   build:
   #     context: ./project
-  #     dockerfile: DockerfileApache  # Specify the name of your Dockerfile if it's not named 'Dockerfile'
+  #     dockerfile: DockerfileApache
   #   container_name: ${CONTAINER_PREFIX}-app
   #   working_dir: /var/www/html
   #   volumes:
