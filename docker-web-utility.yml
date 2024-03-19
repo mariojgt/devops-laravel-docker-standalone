@@ -21,6 +21,7 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     labels:
+      - "traefik.enable=true"
       - "traefik.http.routers.traefik.rule=Host(`traefik-${CONTAINER_PREFIX}.${HOST_PREFIX}`)"
     restart: unless-stopped
 

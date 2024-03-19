@@ -22,3 +22,5 @@ services:
       - "traefik.http.routers.nodeapp01.rule=Host(`${NODE_01_DOMAIN}-${CONTAINER_PREFIX}.${HOST_PREFIX}`)"
       - "traefik.http.services.nodeapp01.loadbalancer.server.port=${NODE_01_PORT}"
       - "traefik.http.services.nodeapp01.loadbalancer.server.scheme=http"
+    networks:
+      - traefik-net

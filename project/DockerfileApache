@@ -26,7 +26,9 @@ RUN apt-get install -y \
     libfreetype6-dev \
     g++ \
     libonig-dev \
-    libzip-dev
+    libzip-dev \
+    libc-client-dev \
+    libkrb5-dev
 
 # 2. apache configs + document root
 ENV APACHE_DOCUMENT_ROOT=/var/www/html/public
@@ -39,6 +41,7 @@ RUN a2enmod rewrite headers
 # 4. start with base php config, then add extensions
 RUN mv "$PHP_INI_DIR/php.ini-development" "$PHP_INI_DIR/php.ini"
 
+# Install required PHP extensions
 RUN docker-php-ext-install \
     bz2 \
     intl \
@@ -48,7 +51,8 @@ RUN docker-php-ext-install \
     calendar \
     mbstring \
     pdo_mysql \
-    zip
+    zip \
+    gd
 
 # Enable additional extensions
 RUN docker-php-ext-enable \
@@ -60,11 +64,26 @@ RUN docker-php-ext-enable \
     calendar \
     mbstring \
     pdo_mysql \
-    zip
+    zip \
+    gd
 
 # Install Redis extension
 RUN pecl install redis \
     && docker-php-ext-enable redis
+
+# Configure and install IMAP extension with Kerberos and SSL support
+RUN docker-php-ext-configure imap --with-kerberos --with-imap-ssl \
+    && docker-php-ext-install imap
+
+# Install PCNTL extension
+RUN docker-php-ext-configure pcntl --enable-pcntl \
+    && docker-php-ext-install pcntl
+
+# Install Sockets extension
+RUN docker-php-ext-install sockets
+
+# Increase PHP memory limit to 2GB
+RUN echo "memory_limit = 2048M" >> /usr/local/etc/php/php.ini
 
 # 5. composer install
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
