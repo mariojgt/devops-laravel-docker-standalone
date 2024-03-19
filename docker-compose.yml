@@ -14,6 +14,7 @@ services:
     working_dir: /var/www/html
     volumes:
       - ${CODE_PATH}:/var/www/html
+      # - ./project/application/laravel:/var/www/html
     networks:
       - traefik-net
   # php-app-apache: # Uncoment this if you want to use apache and comment the above service and the nginx service
@@ -48,7 +49,8 @@ services:
     image: mysql:8.0
     container_name: ${CONTAINER_PREFIX}-mysql
     environment:
-      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'  # Allow root login without password
+      MYSQL_ROOT_PASSWORD: ''  # Empty root password
       MYSQL_DATABASE: ${DB_NAME}
       MYSQL_USER: ${DB_USER}
       MYSQL_PASSWORD: ${DB_PASSWORD}
@@ -64,9 +66,10 @@ services:
     image: mysql:8.0
     container_name: ${CONTAINER_PREFIX}-mysql-archive
     environment:
-      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'  # Allow root login without password
+      MYSQL_ROOT_PASSWORD: ''  # Empty root password
       MYSQL_DATABASE: ${DB_NAME_SECONDARY}
-      MYSQL_USER: ${DB_USER}
+      MYSQL_USER: ${DB_USER_SECONDARY}
       MYSQL_PASSWORD: ${DB_PASSWORD}
     networks:
       - traefik-net
@@ -109,7 +112,7 @@ services:
     container_name: ${CONTAINER_PREFIX}-phpmyadmin-archive
     environment:
       PMA_HOST: mysql-archive
-      PMA_USER: ${DB_USER}
+      PMA_USER: ${DB_USER_SECONDARY}
       PMA_PASSWORD: ${DB_PASSWORD}
     ports:
       - "1235:80"

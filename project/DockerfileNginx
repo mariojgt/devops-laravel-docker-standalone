@@ -10,6 +10,7 @@ RUN npm install -g bun
 RUN apt-get update && apt-get install -y \
     nano \
     git \
+    pv \
     zip \
     curl \
     sudo \
@@ -71,6 +72,9 @@ RUN docker-php-ext-configure pcntl --enable-pcntl \
 
 # Install Sockets extension
 RUN docker-php-ext-install sockets
+
+# Increase PHP memory limit to 2GB
+RUN echo "memory_limit = 2048M" >> /usr/local/etc/php/php.ini
 
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
