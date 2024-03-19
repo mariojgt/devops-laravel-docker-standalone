@@ -17,9 +17,8 @@ services:
     command: sh -c "${NODE_01_START}"
     # Other options you might need
     environment:
-      - NODE_ENV=dev
+      - NODE_ENV=development
     labels:
       - "traefik.http.routers.nodeapp01.rule=Host(`${NODE_01_DOMAIN}-${CONTAINER_PREFIX}.${HOST_PREFIX}`)"
       - "traefik.http.services.nodeapp01.loadbalancer.server.port=${NODE_01_PORT}"
       - "traefik.http.services.nodeapp01.loadbalancer.server.scheme=http"
-

@@ -7,10 +7,7 @@ RUN curl -sL https://deb.nodesource.com/setup_20.x | bash - \
 # Install bun globally
 RUN npm install -g bun
 
-RUN apt-get update
-
-# 1. development packages
-RUN apt-get install -y \
+RUN apt-get update && apt-get install -y \
     nano \
     git \
     zip \
@@ -26,12 +23,15 @@ RUN apt-get install -y \
     libfreetype6-dev \
     g++ \
     libonig-dev \
-    libzip-dev
+    libzip-dev \
+    libssl-dev \
+    libc-client-dev \
+    libkrb5-dev
 
-# 2. start with base php config, then add extensions
+# Start with base php config, then add extensions
 RUN mv "$PHP_INI_DIR/php.ini-development" "$PHP_INI_DIR/php.ini"
 
-# 3. PHP extensions
+# Install required PHP extensions
 RUN docker-php-ext-install \
     bz2 \
     intl \
@@ -41,7 +41,8 @@ RUN docker-php-ext-install \
     calendar \
     mbstring \
     pdo_mysql \
-    zip
+    zip \
+    gd
 
 # Enable additional extensions
 RUN docker-php-ext-enable \
@@ -53,30 +54,35 @@ RUN docker-php-ext-enable \
     calendar \
     mbstring \
     pdo_mysql \
-    zip
+    zip \
+    gd
 
-# 4 Install Redis extension
+# Install Redis extension
 RUN pecl install redis \
     && docker-php-ext-enable redis
 
-# 5. composer install
+# Configure and install IMAP extension with Kerberos and SSL support
+RUN docker-php-ext-configure imap --with-kerberos --with-imap-ssl \
+    && docker-php-ext-install imap
+
+# Install PCNTL extension
+RUN docker-php-ext-configure pcntl --enable-pcntl \
+    && docker-php-ext-install pcntl
+
+# Install Sockets extension
+RUN docker-php-ext-install sockets
+
+# Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# 6. start script
+# Start script
 RUN mkdir -p /scripts
 COPY ./start.sh /scripts
 WORKDIR /scripts
 RUN chmod +x start.sh
 RUN ./start.sh
 
-# 7. we need a user with the same UID/GID with host user
-# so when we execute CLI commands, all the host file's ownership remains intact
-# otherwise command from inside container will create root-owned files and directories
-# ARG uid
-# RUN useradd -G www-data,root -u $uid -d /home/devuser devuser
-# RUN mkdir -p /home/devuser/.composer && \
-#     chown -R devuser:devuser /home/devuser
-
+# Expose port 80
 EXPOSE 80
 
 CMD ["php-fpm"]

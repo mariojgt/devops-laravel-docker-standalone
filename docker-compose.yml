@@ -43,7 +43,7 @@ services:
       - "traefik.http.routers.nginx.rule=Host(`${APP_NAME}-${CONTAINER_PREFIX}.${HOST_PREFIX}`)"
       - "traefik.http.services.nginx.loadbalancer.server.port=8001"
 
-  # MySQL Database
+  # MySQL Database Primary
   mysql:
     image: mysql:8.0
     container_name: ${CONTAINER_PREFIX}-mysql
@@ -59,6 +59,22 @@ services:
     volumes:
       - mysql_data:/var/lib/mysql
 
+  #  Mysql database secondary
+  mysql-archive:
+    image: mysql:8.0
+    container_name: ${CONTAINER_PREFIX}-mysql-archive
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_DATABASE: ${DB_NAME_SECONDARY}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+    networks:
+      - traefik-net
+    labels:
+      - "traefik.enable=false"
+    volumes:
+      - mysql_archive_data:/var/lib/mysql
+
   # Redis Server
   redis:
     image: redis:alpine
@@ -70,7 +86,7 @@ services:
     volumes:
       - redis_data:/data
 
-  # PHPMyAdmin
+  # PHPMyAdmin Primary Database
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
     container_name: ${CONTAINER_PREFIX}-phpmyadmin
@@ -84,6 +100,23 @@ services:
       - traefik-net
     labels:
       - "traefik.http.routers.phpmyadmin.rule=Host(`phpmyadmin-${CONTAINER_PREFIX}.${HOST_PREFIX}`)"
+    volumes:
+      - phpmyadmin_data:/data
+
+  # PHPMyAdmin Secondary Database
+  phpmyadmin-archive:
+    image: phpmyadmin/phpmyadmin
+    container_name: ${CONTAINER_PREFIX}-phpmyadmin-archive
+    environment:
+      PMA_HOST: mysql-archive
+      PMA_USER: ${DB_USER}
+      PMA_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - "1235:80"
+    networks:
+      - traefik-net
+    labels:
+      - "traefik.http.routers.phpmyadmin-archive.rule=Host(`phpmyadmin-archive-${CONTAINER_PREFIX}.${HOST_PREFIX}`)"
     volumes:
       - phpmyadmin_data:/data
 
@@ -106,4 +139,5 @@ volumes:
   phpmyadmin_data:
   redis_data:
   mysql_data:
+  mysql_archive_data:
   meili_data:
