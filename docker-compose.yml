@@ -18,7 +18,7 @@ services:
       - ../jmi/packages/:/var/packages
     networks:
       - traefik-net
-  php-app: # Uncoment this if you want to use apache and comment the above service and the nginx service
+  php-app:
     build:
       context: ./project
       dockerfile: DockerfileApache
