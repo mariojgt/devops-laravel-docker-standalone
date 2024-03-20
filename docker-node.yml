@@ -20,6 +20,6 @@ services:
     environment:
       - NODE_ENV=development
     labels:
-      - "traefik.http.routers.nodeapp01.rule=Host(`${NODE_01_DOMAIN}-${CONTAINER_PREFIX}.${HOST_PREFIX}`)"
+      - "traefik.http.routers.nodeapp01.rule=Host(`${NODE_01_DOMAIN}.${HOST_PREFIX}`)"
       - "traefik.http.services.nodeapp01.loadbalancer.server.port=${NODE_01_PORT}"
       - "traefik.http.services.nodeapp01.loadbalancer.server.scheme=http"

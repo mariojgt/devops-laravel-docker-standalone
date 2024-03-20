@@ -95,17 +95,10 @@ PURPLE := \033[0;35m
 FIRE := \033[0;91m
 
 links:
-<<<<<<< Updated upstream
-	@echo "$(RED)http://${APP_NAME}-${CONTAINER_PREFIX}.${HOST_PREFIX}/ (Laravel)"
-	@echo "$(GREEN)http://phpmyadmin-${CONTAINER_PREFIX}.${HOST_PREFIX}/ (PhpMyAdmin)"
-	@echo "$(GREEN)http://phpmyadmin-archive-${CONTAINER_PREFIX}.${HOST_PREFIX}/ (PhpMyAdmin-secondaryDB)"
-	@echo "$(RESET)http://meilisearch-${CONTAINER_PREFIX}.${HOST_PREFIX}/ (Meilisearch)"
-=======
 	@echo "$(RED)http://${APP_NAME}.${CONTAINER_PREFIX}.${HOST_PREFIX}/ (Laravel)"
 	@echo "$(GREEN)http://phpmyadmin.${CONTAINER_PREFIX}.${HOST_PREFIX}/ (PhpMyAdmin)"
 	@echo "$(GREEN)http://phpmyadmin-archive.${CONTAINER_PREFIX}.${HOST_PREFIX}/ (PhpMyAdmin-secondaryDB)"
 	@echo "$(RESET)http://meilisearch.${CONTAINER_PREFIX}.${HOST_PREFIX}/ (Meilisearch)"
->>>>>>> Stashed changes
 	@echo "$(BLUE)http://localhost:8080/ (Traefik)"
 	@echo "$(YELLOW)http://portainer-${CONTAINER_PREFIX}.${HOST_PREFIX}/ (Portainer)"
 	@echo "$(PURPLE)http://redis-insight-${CONTAINER_PREFIX}.${HOST_PREFIX}/ (Redis Insight)"

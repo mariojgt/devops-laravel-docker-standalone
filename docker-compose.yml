@@ -6,58 +6,45 @@ networks:
 
 services:
   # Laravel Application
-  php-app: # If you update the service name you have to change in the nginx default.conf file
+  # php-app: # If you update the service name you have to change in the nginx default.conf file
+  #   build:
+  #     context: ./project
+  #     dockerfile: DockerfileNginx
+  #   container_name: ${CONTAINER_PREFIX}-app
+  #   working_dir: /var/www/html
+  #   volumes:
+  #     - ${CODE_PATH}:/var/www/html
+  #     # - ./project/application/laravel:/var/www/html
+  #   networks:
+  #     - traefik-net
+  php-app: # Uncoment this if you want to use apache and comment the above service and the nginx service
     build:
       context: ./project
-      dockerfile: DockerfileNginx
+      dockerfile: DockerfileApache
     container_name: ${CONTAINER_PREFIX}-app
     working_dir: /var/www/html
     volumes:
       - ${CODE_PATH}:/var/www/html
-<<<<<<< Updated upstream
-      # - ./project/application/laravel:/var/www/html
-    networks:
-      - traefik-net
-  # php-app-apache: # Uncoment this if you want to use apache and comment the above service and the nginx service
-  #   build:
-  #     context: ./project
-  #     dockerfile: DockerfileApache
-  #   container_name: ${CONTAINER_PREFIX}-app
-  #   working_dir: /var/www/html
-=======
       - ../jmi/.env:/var/www/html/.env
       - ../jmi/packages/:/var/packages
     networks:
       - traefik-net
     labels:
-      - "traefik.http.routers.php-app-apache.rule=Host(`${APP_NAME}.${CONTAINER_PREFIX}.${HOST_PREFIX}`)"
+      - "traefik.http.routers.php-app.rule=Host(`${APP_NAME}.${CONTAINER_PREFIX}.${HOST_PREFIX}`)"
   # Nginx
   # nginx:
   #   image: nginx:latest
   #   container_name: ${CONTAINER_PREFIX}-nginx
   #   ports:
   #     - "8001:8001"
->>>>>>> Stashed changes
   #   volumes:
+  #     - ./nginx/default:/etc/nginx/conf.d/default.conf
   #     - ${CODE_PATH}:/var/www/html
   #   networks:
   #     - traefik-net
   #   labels:
-  #     - "traefik.http.routers.${APP_NAME}-${CONTAINER_PREFIX}.rule=Host(`${APP_NAME}-${CONTAINER_PREFIX}.${HOST_PREFIX}`)"
-  # Nginx
-  nginx:
-    image: nginx:latest
-    container_name: ${CONTAINER_PREFIX}-nginx
-    ports:
-      - "8001:8001"
-    volumes:
-      - ./nginx/default:/etc/nginx/conf.d/default.conf
-      - ${CODE_PATH}:/var/www/html
-    networks:
-      - traefik-net
-    labels:
-      - "traefik.http.routers.nginx.rule=Host(`${APP_NAME}-${CONTAINER_PREFIX}.${HOST_PREFIX}`)"
-      - "traefik.http.services.nginx.loadbalancer.server.port=8001"
+  #     - "traefik.http.routers.nginx.rule=Host(`${APP_NAME}-${CONTAINER_PREFIX}.${HOST_PREFIX}`)"
+  #     - "traefik.http.services.nginx.loadbalancer.server.port=8001"
 
   # MySQL Database Primary
   mysql:
@@ -139,9 +126,9 @@ services:
       - phpmyadmin_data:/data
 
   # MeiliSearch
-  meliserach:
+  meilisearch:
     image: getmeili/meilisearch:v1.6
-    container_name: meliserach
+    container_name: meilisearch
     ports:
       - 7700:7700
     environment:
@@ -151,11 +138,7 @@ services:
     networks:
       - traefik-net
     labels:
-<<<<<<< Updated upstream
-      - "traefik.http.routers.meliserach.rule=Host(`meilisearch-${CONTAINER_PREFIX}.${HOST_PREFIX}`)"
-=======
       - "traefik.http.routers.meilisearch.rule=Host(`meilisearch.${CONTAINER_PREFIX}.${HOST_PREFIX}`)"
->>>>>>> Stashed changes
 
 volumes:
   phpmyadmin_data:
