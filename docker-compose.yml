@@ -129,7 +129,7 @@ services:
   # MeiliSearch
   meilisearch:
     image: getmeili/meilisearch:v1.7
-    container_name: meilisearch
+    container_name: ${CONTAINER_PREFIX}-meilisearch
     ports:
       - 7700:7700
     environment:
