@@ -95,15 +95,16 @@ PURPLE := \033[0;35m
 FIRE := \033[0;91m
 
 links:
-	@echo "$(RED)http://${APP_NAME}.${CONTAINER_PREFIX}.${HOST_PREFIX}/ (Laravel)"
+	@echo "$(RED)http://${APP_NAME}.${CONTAINER_PREFIX}.${HOST_PREFIX}/ (Laravel Apache)"
+	@echo "$(RED)http://${APP_NAME}.${CONTAINER_PREFIX}.2.${HOST_PREFIX}/ (Laravel Nginx)"
 	@echo "$(GREEN)http://phpmyadmin.${CONTAINER_PREFIX}.${HOST_PREFIX}/ (PhpMyAdmin)"
 	@echo "$(GREEN)http://phpmyadmin-archive.${CONTAINER_PREFIX}.${HOST_PREFIX}/ (PhpMyAdmin-secondaryDB)"
 	@echo "$(RESET)http://meilisearch.${CONTAINER_PREFIX}.${HOST_PREFIX}/ (Meilisearch)"
 	@echo "$(BLUE)http://localhost:8080/ (Traefik)"
 	@echo "$(YELLOW)http://portainer-${CONTAINER_PREFIX}.${HOST_PREFIX}/ (Portainer)"
 	@echo "$(PURPLE)http://redis-insight-${CONTAINER_PREFIX}.${HOST_PREFIX}/ (Redis Insight)"
-	@echo "$(FIRE)http://${NODE_01_DOMAIN}-${CONTAINER_PREFIX}.${HOST_PREFIX}:${NODE_01_PORT_EXPOSE}/ (Node App 01)"
-	@echo "$(FIRE)http://${NODE_02_DOMAIN}-${CONTAINER_PREFIX}.${HOST_PREFIX}:${NODE_02_PORT_EXPOSE}/ (Node App 02)"
+	@echo "$(FIRE)http://${NODE_01_DOMAIN}.${HOST_PREFIX}:${NODE_01_PORT_EXPOSE}/ (Node App 01)"
+	@echo "$(FIRE)http://${NODE_02_DOMAIN}.${HOST_PREFIX}:${NODE_02_PORT_EXPOSE}/ (Node App 02)"
 
 # run composer in contianer of name laravel-app and give the permission to laravel bootstrap and storage folder
 composer:
@@ -112,6 +113,8 @@ composer:
 
 bash-php:
 	@$(DOCKER) exec -it $(CONTAINER_PREFIX)-app /bin/bash
+bash-php2:
+	@$(DOCKER) exec -it $(CONTAINER_PREFIX)-app2 /bin/bash
 bash-nginx:
 	@$(DOCKER) exec -it $(CONTAINER_PREFIX)-nginx /bin/bash
 bash-redis:

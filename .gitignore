@@ -1,2 +1,4 @@
 /project/application/*
 .env
+/meili_data/*
+

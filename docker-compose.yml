@@ -6,17 +6,18 @@ networks:
 
 services:
   # Laravel Application
-  # php-app: # If you update the service name you have to change in the nginx default.conf file
-  #   build:
-  #     context: ./project
-  #     dockerfile: DockerfileNginx
-  #   container_name: ${CONTAINER_PREFIX}-app
-  #   working_dir: /var/www/html
-  #   volumes:
-  #     - ${CODE_PATH}:/var/www/html
-  #     # - ./project/application/laravel:/var/www/html
-  #   networks:
-  #     - traefik-net
+  php-app-nginx: # If you update the service name you have to change in the nginx default.conf file
+    build:
+      context: ./project
+      dockerfile: DockerfileNginx
+    container_name: ${CONTAINER_PREFIX}-app2
+    working_dir: /var/www/html
+    volumes:
+      - ${CODE_PATH}:/var/www/html
+      - ../jmi/.env:/var/www/html/.env
+      - ../jmi/packages/:/var/packages
+    networks:
+      - traefik-net
   php-app: # Uncoment this if you want to use apache and comment the above service and the nginx service
     build:
       context: ./project
@@ -32,19 +33,19 @@ services:
     labels:
       - "traefik.http.routers.php-app.rule=Host(`${APP_NAME}.${CONTAINER_PREFIX}.${HOST_PREFIX}`)"
   # Nginx
-  # nginx:
-  #   image: nginx:latest
-  #   container_name: ${CONTAINER_PREFIX}-nginx
-  #   ports:
-  #     - "8001:8001"
-  #   volumes:
-  #     - ./nginx/default:/etc/nginx/conf.d/default.conf
-  #     - ${CODE_PATH}:/var/www/html
-  #   networks:
-  #     - traefik-net
-  #   labels:
-  #     - "traefik.http.routers.nginx.rule=Host(`${APP_NAME}-${CONTAINER_PREFIX}.${HOST_PREFIX}`)"
-  #     - "traefik.http.services.nginx.loadbalancer.server.port=8001"
+  nginx:
+    image: nginx:latest
+    container_name: ${CONTAINER_PREFIX}-nginx
+    ports:
+      - "8001:8001"
+    volumes:
+      - ./nginx/default:/etc/nginx/conf.d/default.conf
+      - ${CODE_PATH}:/var/www/html
+    networks:
+      - traefik-net
+    labels:
+      - "traefik.http.routers.nginx.rule=Host(`${APP_NAME}.${CONTAINER_PREFIX}.2.${HOST_PREFIX}`)"
+      - "traefik.http.services.nginx.loadbalancer.server.port=8001"
 
   # MySQL Database Primary
   mysql:
@@ -127,14 +128,14 @@ services:
 
   # MeiliSearch
   meilisearch:
-    image: getmeili/meilisearch:v1.6
+    image: getmeili/meilisearch:v1.7
     container_name: meilisearch
     ports:
       - 7700:7700
     environment:
       - MEILI_MASTER_KEY=${MEILI_MASTER_KEY}
     volumes:
-      - ./meili_data:/data.ms  # Mount volume for MeiliSearch data persistence
+      - ./meili_data:/meili_data
     networks:
       - traefik-net
     labels:
