@@ -14,6 +14,7 @@ services:
     working_dir: /var/www/html
     volumes:
       - ${CODE_PATH}:/var/www/html
+<<<<<<< Updated upstream
       # - ./project/application/laravel:/var/www/html
     networks:
       - traefik-net
@@ -23,6 +24,20 @@ services:
   #     dockerfile: DockerfileApache
   #   container_name: ${CONTAINER_PREFIX}-app
   #   working_dir: /var/www/html
+=======
+      - ../jmi/.env:/var/www/html/.env
+      - ../jmi/packages/:/var/packages
+    networks:
+      - traefik-net
+    labels:
+      - "traefik.http.routers.php-app-apache.rule=Host(`${APP_NAME}.${CONTAINER_PREFIX}.${HOST_PREFIX}`)"
+  # Nginx
+  # nginx:
+  #   image: nginx:latest
+  #   container_name: ${CONTAINER_PREFIX}-nginx
+  #   ports:
+  #     - "8001:8001"
+>>>>>>> Stashed changes
   #   volumes:
   #     - ${CODE_PATH}:/var/www/html
   #   networks:
@@ -102,7 +117,7 @@ services:
     networks:
       - traefik-net
     labels:
-      - "traefik.http.routers.phpmyadmin.rule=Host(`phpmyadmin-${CONTAINER_PREFIX}.${HOST_PREFIX}`)"
+      - "traefik.http.routers.phpmyadmin.rule=Host(`phpmyadmin.${CONTAINER_PREFIX}.${HOST_PREFIX}`)"
     volumes:
       - phpmyadmin_data:/data
 
@@ -119,7 +134,7 @@ services:
     networks:
       - traefik-net
     labels:
-      - "traefik.http.routers.phpmyadmin-archive.rule=Host(`phpmyadmin-archive-${CONTAINER_PREFIX}.${HOST_PREFIX}`)"
+      - "traefik.http.routers.phpmyadmin-archive.rule=Host(`phpmyadmin-archive.${CONTAINER_PREFIX}.${HOST_PREFIX}`)"
     volumes:
       - phpmyadmin_data:/data
 
@@ -136,7 +151,11 @@ services:
     networks:
       - traefik-net
     labels:
+<<<<<<< Updated upstream
       - "traefik.http.routers.meliserach.rule=Host(`meilisearch-${CONTAINER_PREFIX}.${HOST_PREFIX}`)"
+=======
+      - "traefik.http.routers.meilisearch.rule=Host(`meilisearch.${CONTAINER_PREFIX}.${HOST_PREFIX}`)"
+>>>>>>> Stashed changes
 
 volumes:
   phpmyadmin_data:

@@ -11,6 +11,7 @@ services:
     working_dir: /app
     volumes:
       - ${NODE_02_CODE_PATH}:/app
+      - ../jmi/.env:/app/.env
     ports:
       - ${NODE_02_PORT}:${NODE_02_PORT_EXPOSE:-3000}  # Provide a default value of 3000 if NODE_PORT_EXPOSE is not set
     # Command to run during the build process
