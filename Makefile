@@ -1,4 +1,4 @@
-.PHONY: start stop build
+.PHONY: help start stop build
 
 COMPOSE=sudo docker-compose
 DOCKER=sudo docker
@@ -12,6 +12,8 @@ NODE_01_DOMAIN:= $(shell grep -E '^NODE_01_DOMAIN' .env | cut -d '=' -f 2)
 NODE_01_PORT_EXPOSE:= $(shell grep -E '^NODE_01_PORT_EXPOSE' .env | cut -d '=' -f 2)
 NODE_02_DOMAIN:= $(shell grep -E '^NODE_02_DOMAIN' .env | cut -d '=' -f 2)
 NODE_02_PORT_EXPOSE:= $(shell grep -E '^NODE_02_PORT_EXPOSE' .env | cut -d '=' -f 2)
+NODE_01_APP_NAME:= $(shell grep -E '^NODE_01_APP_NAME' .env | cut -d '=' -f 2)
+NODE_02_APP_NAME:= $(shell grep -E '^NODE_02_APP_NAME' .env | cut -d '=' -f 2)
 
 # /*
 # |--------------------------------------------------------------------------
@@ -123,6 +125,27 @@ bash-nodeapp01:
 	@$(DOCKER) exec -it $(CONTAINER_PREFIX)-nodeapp01 /bin/bash
 bash-nodeapp02:
 	@$(DOCKER) exec -it $(CONTAINER_PREFIX)-nodeapp02 /bin/bash
+
+# /*
+# |--------------------------------------------------------------------------
+# | Meilisearch commands
+# |--------------------------------------------------------------------------
+# */
+meilisearch-moves:
+	@$(DOCKER) exec -it $(CONTAINER_PREFIX)-app /bin/bash -c "php artisan scout:flush 'App\Models\Move' && php artisan scout:import 'App\Models\Move'"
+meilisearch-config:
+	@$(DOCKER) exec -it $(CONTAINER_PREFIX)-app /bin/bash -c "php artisan meilisearch:key && meilisearch:config"
+
+# /*
+# |--------------------------------------------------------------------------
+# | Laravel commands
+# |--------------------------------------------------------------------------
+# */
+horizon:
+	@$(DOCKER) exec -it $(CONTAINER_PREFIX)-app /bin/bash -c "php artisan horizon"
+clear-cache:
+	@$(DOCKER) exec -it $(CONTAINER_PREFIX)-app /bin/bash -c "php artisan optimize:clear"
+
 # /*
 # |--------------------------------------------------------------------------
 # | Install Command
@@ -131,3 +154,44 @@ bash-nodeapp02:
 install: network build start start-utility start-nodeapp composer links
 
 uninstall: stop stop-utility stop-nodeapp destroy prune delete-volumes
+
+# Help command
+help:
+	@echo "$(CYAN)Available commands:$(RESET)"
+	@echo "$(YELLOW)---------------Network------------------------------------$(RESET)"
+	@echo "$(RED)newtork$(RESET)             : Create Docker network"
+	@echo "$(RED)network-list$(RESET)        : List Docker networks"
+	@echo "$(YELLOW)---------------Docker Container start and stop commands---$(RESET)"
+	@echo "$(RED)start$(RESET)              : Start all containers"
+	@echo "$(RED)start-utility$(RESET)      : Start utility containers"
+	@echo "$(RED)start-nodeapp$(RESET)      : Start Node App 01 container $(BLUE)$(NODE_01_APP_NAME)"
+	@echo "$(RED)start-nodeapp2$(RESET)     : Start Node App 02 container $(BLUE)$(NODE_02_APP_NAME)"
+	@echo "$(RED)stop$(RESET)               : Stop all containers"
+	@echo "$(RED)stop-utility$(RESET)       : Stop utility containers"
+	@echo "$(RED)stop-nodeapp$(RESET)       : Stop Node App 01 container"
+	@echo "$(RED)stop-nodeapp2$(RESET)      : Stop Node App 02 container"
+	@echo "$(YELLOW)---------------Docker Build--------------------------------$(RESET)"
+	@echo "$(RED)build$(RESET)              : Build all containers"
+	@echo "$(YELLOW)---------------Docker Cache clear--------------------------$(RESET)"
+	@echo "$(RED)destroy$(RESET)            : Remove all containers"
+	@echo "$(RED)delete-volumes$(RESET)     : Delete all volumes"
+	@echo "$(RED)prune$(RESET)              : Clear Docker system resources"
+	@echo "$(YELLOW)---------------Utility commands----------------------------$(RESET)"
+	@echo "$(RED)list$(RESET)               : List all containers"
+	@echo "$(RED)links$(RESET)              : Show useful links"
+	@echo "$(RED)composer$(RESET)           : Run composer install inside PHP container"
+	@echo "$(RED)bash-php$(RESET)           : Enter bash shell of PHP container"
+	@echo "$(RED)bash-php2$(RESET)          : Enter bash shell of PHP2 container"
+	@echo "$(RED)bash-nginx$(RESET)         : Enter bash shell of Nginx container"
+	@echo "$(RED)bash-redis$(RESET)         : Enter bash shell of Redis container"
+	@echo "$(RED)bash-nodeapp01$(RESET)     : Enter bash shell of Node App 01 container"
+	@echo "$(RED)bash-nodeapp02$(RESET)     : Enter bash shell of Node App 02 container"
+	@echo "$(YELLOW)---------------Meilisearch commands------------------------$(RESET)"
+	@echo "$(RED)meilisearch-moves$(RESET)  : Flush and import Meilisearch index"
+	@echo "$(RED)meilisearch-config$(RESET) : Configure Meilisearch"
+	@echo "$(YELLOW)---------------Laravel commands----------------------------$(RESET)"
+	@echo "$(RED)horizon$(RESET)            : Start Laravel Horizon"
+	@echo "$(RED)clear-cache$(RESET)        : Clear Laravel cache"
+	@echo "$(YELLOW)---------------Install and Uninstall-----------------------$(RESET)"
+	@echo "$(RED)install$(RESET)            : Install all containers"
+	@echo "$(RED)uninstall$(RESET)          : Uninstall all containers"
