@@ -1,4 +1,4 @@
-.PHONY: help start stop build
+.PHONY: help
 
 COMPOSE=sudo docker-compose
 DOCKER=sudo docker
