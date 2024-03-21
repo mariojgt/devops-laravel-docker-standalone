@@ -28,7 +28,6 @@ services:
       - ${CODE_PATH}:/var/www/html
       - ../jmi/.env:/var/www/html/.env
       - ../jmi/packages/:/var/packages
-      - ./project/PSR12Tabs.xml:/usr/src/app/PSR12.xml
     networks:
       - traefik-net
     labels:

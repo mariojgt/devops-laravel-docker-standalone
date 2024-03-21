@@ -148,20 +148,6 @@ clear-cache:
 
 # /*
 # |--------------------------------------------------------------------------
-# | Php commands
-# |--------------------------------------------------------------------------
-# */
-# Fix PHP errors based on PHPCS rules for a specific file
-fix-file-php:
-	@read -p "Enter the path to the PHP file: " file; \
-	$(DOCKER) exec -it $(CONTAINER_PREFIX)-app /bin/bash -c "phpcbf --standard=/usr/src/app/PSR12Tabs.xml $$file"
-
-check-file-php:
-	@read -p "Enter the path to the PHP file: " file; \
-	$(DOCKER) exec -it $(CONTAINER_PREFIX)-app /bin/bash -c "phpcs --standard=/usr/src/app/PSR12.xml -q --error-severity=1 --warning-severity=8 --extensions=php --report=checkstyle $$file"
-
-# /*
-# |--------------------------------------------------------------------------
 # | Install Command
 # |--------------------------------------------------------------------------
 # */

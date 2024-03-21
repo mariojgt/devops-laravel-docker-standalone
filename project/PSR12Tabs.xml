@@ -66,6 +66,7 @@
             </property>
         </properties>
     </rule>
+    <rule ref="Generic.WhiteSpace.DisallowTabIndent"/>
 
     <!-- 2.5 Keywords and Types -->
 
