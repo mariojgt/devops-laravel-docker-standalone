@@ -14,6 +14,8 @@ NODE_02_DOMAIN:= $(shell grep -E '^NODE_02_DOMAIN' .env | cut -d '=' -f 2)
 NODE_02_PORT_EXPOSE:= $(shell grep -E '^NODE_02_PORT_EXPOSE' .env | cut -d '=' -f 2)
 NODE_01_APP_NAME:= $(shell grep -E '^NODE_01_APP_NAME' .env | cut -d '=' -f 2)
 NODE_02_APP_NAME:= $(shell grep -E '^NODE_02_APP_NAME' .env | cut -d '=' -f 2)
+NODE_01_CODE_PATH:= $(shell grep -E '^NODE_01_CODE_PATH' .env | cut -d '=' -f 2)
+NODE_02_CODE_PATH:= $(shell grep -E '^NODE_02_CODE_PATH' .env | cut -d '=' -f 2)
 
 # /*
 # |--------------------------------------------------------------------------
@@ -53,6 +55,20 @@ stop-nodeapp:
 
 stop-nodeapp2:
 	$(COMPOSE) -f docker-node2.yml down
+
+# /*
+# |--------------------------------------------------------------------------
+# | Vscode utility
+# |--------------------------------------------------------------------------
+# */
+
+open-app:
+	@code $(CODE_PATH)/
+open-nodeapp:
+	@code $(NODE_01_CODE_PATH)/
+open-nodeapp2:
+	@code $(NODE_02_CODE_PATH)/
+
 # /*
 # |--------------------------------------------------------------------------
 # | Docker Build
@@ -189,6 +205,10 @@ help:
 	@echo "$(YELLOW)---------------Meilisearch commands------------------------$(RESET)"
 	@echo "$(RED)meilisearch-moves$(RESET)  : Flush and import Meilisearch index"
 	@echo "$(RED)meilisearch-config$(RESET) : Configure Meilisearch"
+	@echo "$(YELLOW)---------------Vscode utility-------------------------------$(RESET)"
+	@echo "$(RED)open-app$(RESET)           : Open Laravel app in vscode"
+	@echo "$(RED)open-nodeapp$(RESET)       : Open Node App 01 in vscode"
+	@echo "$(RED)open-nodeapp2$(RESET)      : Open Node App 02 in vscode"
 	@echo "$(YELLOW)---------------Laravel commands----------------------------$(RESET)"
 	@echo "$(RED)horizon$(RESET)            : Start Laravel Horizon"
 	@echo "$(RED)clear-cache$(RESET)        : Clear Laravel cache"
