@@ -111,7 +111,7 @@ composer:
 	$(COMPOSE) exec php-app chmod -R 777 ./
 
 bash-php:
-	@$(DOCKER) exec -it $(CONTAINER_PREFIX)-app /bin/bash
+	@$(DOCKER) exec -itu devuser $(CONTAINER_PREFIX)-app /bin/bash
 bash-nginx:
 	@$(DOCKER) exec -it $(CONTAINER_PREFIX)-nginx /bin/bash
 bash-redis:

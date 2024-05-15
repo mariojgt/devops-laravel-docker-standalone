@@ -22,8 +22,11 @@ services:
     build:
       context: ./project
       dockerfile: DockerfileApache
+      args:
+          uid: ${UID:-1000}
     container_name: ${CONTAINER_PREFIX}-app
     working_dir: /var/www/html
+    user: devuser
     volumes:
       - ${CODE_PATH}:/var/www/html
     networks:
